@@ -1,0 +1,1395 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles2.css">
+    <script>
+        // Districts corresponding to each state
+        const districts = {
+            "Andhra Pradesh": ["Ananthapuramu", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool", "Nellore", "Prakasam", "Srikakulam", "Visakhapatnam", "Vizianagaram", "West Godavari", "YSR Kadapa"],
+            "Arunachal Pradesh": ["Itanagar", "Tawang", "Bomdila", "Namsai", "Papum Pare", "Lower Subansiri", "Upper Subansiri", "West Siang", "East Siang", "Siang", "Lower Dibang Valley", "Dibang Valley", "Tirap", "Changlang"],
+            "Assam": ["Guwahati", "Dibrugarh", "Silchar", "Jorhat", "Nagaon", "Karimganj", "Barpeta", "Cachar", "Tinsukia", "Bongaigaon", "Goalpara", "Hailakandi", "Sonitpur", "Baksa", "Darrang", "Udalguri", "Morigaon", "Kamrup Metropolitan", "Kamrup"],
+            "Bihar": ["Patna", "Gaya", "Bhagalpur", "Munger", "Saran", "Darbhanga", "Muzaffarpur", "Purnia", "Rohtas", "Nalanda", "Vaishali", "Samastipur", "Katihar", "Begusarai", "Aurangabad", "Sitamarhi", "West Champaran", "East Champaran", "Sheikhpura", "Kaimur", "Lakhisarai", "Jahanabad", "Nawada", "Supaul", "Gopalganj", "Banka", "Arwal", "Khagaria", "Jamui"],
+            "Chhattisgarh": ["Raipur", "Durg", "Bilaspur", "Korba", "Dantewada", "Jagdalpur", "Kondagaon", "Bastar", "Surguja", "Raigarh", "Mahasamund", "Rajnandgaon", "Balod", "Dhamtari", "Kabirdham", "Gariaband", "Kanker", "Balrampur", "Sukma", "Mungeli"],
+            "Goa": ["North Goa", "South Goa"],
+            "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Junagadh", "Gandhinagar", "Panchmahal", "Kutch", "Sabarkantha", "Dahod", "Narmada", "Valsad", "Anand", "Mahisagar", "Navsari", "Banaskantha", "Porbandar", "Surendranagar", "Botad", "Dangs"],
+            "Haryana": ["Chandigarh", "Ambala", "Hisar", "Karnal", "Kurukshetra", "Panchkula", "Sirsa", "Faridabad", "Gurugram", "Rewari", "Bhiwani", "Jhajjar", "Rohtak", "Sonipat", "Fatehabad", "Palwal", "Nuh"],
+            "Himachal Pradesh": ["Shimla", "Dharamshala", "Kullu", "Mandi", "Sirmaur", "Solan", "Bilaspur", "Hamirpur", "Kinnaur", "Lahaul and Spiti", "Chamba", "Una"],
+            "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Deoghar", "Dumka", "Giridih", "Hazaribagh", "Koderma", "Ramgarh", "Palamu", "Chatra", "Seraikela Kharsawan", "Simdega", "West Singhbhum", "East Singhbhum", "Pakur", "Sahebganj"],
+            "Karnataka": ["Bengaluru", "Mysuru", "Hubli", "Dharwad", "Belagavi", "Tumakuru", "Mandya", "Kodagu", "Chikkamagaluru", "Dakshina Kannada", "Udupi", "Hassan", "Kolar", "Chitradurga", "Ballari", "Raichur", "Bagalkote", "Bijapur", "Yadgir", "Bidar", "Gadag", "Haveri", "Karwar", "Davangere"],
+            "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Ernakulam", "Malappuram", "Kottayam", "Alappuzha", "Pathanamthitta", "Idukki", "Wayanad", "Kasaragod", "Kannur", "Palakkad", "Thrissur"],
+            "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Jabalpur", "Ujjain", "Sagar", "Ratlam", "Shivpuri", "Dhar", "Mandsaur", "Khargone", "Chhindwara", "Balaghat", "Narsinghpur", "Sehore", "Hoshangabad", "Burhanpur", "Dewas", "Khandwa", "Betul", "Vidisha", "Rajgarh", "Shahdol", "Sheopur", "Datia", "Panna", "Umaria", "Sidhi", "Singrauli"],
+            "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik", "Aurangabad", "Solapur", "Amravati", "Ratnagiri", "Sindhudurg", "Jalna", "Kolhapur", "Dhule", "Nandurbar", "Washim", "Akola", "Buldhana", "Osmanabad", "Parbhani", "Jalna", "Ahmednagar", "Beed", "Latur", "Wardha", "Chandrapur", "Gadchiroli", "Yavatmal"],
+            "Manipur": ["Imphal", "Churachandpur", "Thoubal", "Senapati", "Tamenglong", "Ukhrul", "Chandel", "Bishnupur", "Jiribam", "Kakching", "Noney", "Pherzawl", "Tengnoupal"],
+            "Meghalaya": ["Shillong", "Tura", "Jowai", "Nongstoin", "Bishop", "Mokokchung"],
+            "Mizoram": ["Aizawl", "Lunglei", "Champhai", "Serchhip", "Mamit", "Kolasib", "Lawngtlai", "Saiha"],
+            "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Wokha", "Zunheboto", "Phek", "Tuensang", "Mon", "Kiphire", "Longleng"],
+            "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Sambalpur", "Berhampur", "Balasore", "Khurda", "Ganjam", "Dhenkanal", "Kandhamal"],
+            "Punjab": ["Amritsar", "Barnala", "Batala", "Fatehgarh Sahib", "Faridkot", "Firozpur", "Gurdaspur", "Jalandhar", "Kapurthala", "Ludhiana", "Mansa", "Moga", "Muktsar", "Patiala", "Rupnagar", "SAS Nagar", "Sangrur", "Tarn Taran"],
+            "Rajasthan": ["Ajmer", "Alwar", "Banswara", "Baran", "Barmer", "Bharatpur", "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", "Dholpur", "Hanumangarh", "Jaisalmer", "Jaipur", "Jodhpur", "Jhunjhunu", "Karauli", "Nagaur", "Pali", "Rajsamand", "Sawai Madhopur", "Sikar", "Tonk", "Udaipur"],
+            "Sikkim": ["Gangtok", "Namchi", "Mangan"],
+            "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai"],
+            "Telangana": ["Hyderabad", "Warangal", "Khammam"],
+            "Tripura": ["Agartala", "Ambassa", "Belonia"],
+            "Uttar Pradesh": ["Lucknow", "Kanpur", "Varanasi"],
+            "Uttarakhand": ["Dehradun", "Haridwar", "Nainital"],
+            "West Bengal": ["Kolkata", "Darjeeling", "Howrah"]
+        };
+
+        const data = [
+  {
+    "state": "Andhra Pradesh",
+    "district": "East Godavari",
+    "market": "Rajahmundry",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "Swarna Masuri (New)",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2320",
+    "max_price": "2320",
+    "modal_price": "2320"
+  },
+  {
+    "state": "Andhra Pradesh",
+    "district": "East Godavari",
+    "market": "Ravulapelem",
+    "commodity": "Banana",
+    "variety": "Amruthapani",
+    "grade": "Large",
+    "arrival_date": "18/10/2024",
+    "min_price": "1700",
+    "max_price": "2300",
+    "modal_price": "2100"
+  },
+  {
+    "state": "Andhra Pradesh",
+    "district": "East Godavari",
+    "market": "Ravulapelem",
+    "commodity": "Banana",
+    "variety": "Bhushavali(Pacha)",
+    "grade": "Large",
+    "arrival_date": "18/10/2024",
+    "min_price": "1200",
+    "max_price": "1800",
+    "modal_price": "1600"
+  },
+  {
+    "state": "Andhra Pradesh",
+    "district": "East Godavari",
+    "market": "Ravulapelem",
+    "commodity": "Banana",
+    "variety": "Chakkarakeli(White)",
+    "grade": "Large",
+    "arrival_date": "18/10/2024",
+    "min_price": "1700",
+    "max_price": "2400",
+    "modal_price": "2200"
+  },
+  {
+    "state": "Andhra Pradesh",
+    "district": "Guntur",
+    "market": "Tenali",
+    "commodity": "Lemon",
+    "variety": "Lemon",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "4000",
+    "max_price": "5500",
+    "modal_price": "4800"
+  },
+  {
+    "state": "Andhra Pradesh",
+    "district": "Kurnool",
+    "market": "Pattikonda",
+    "commodity": "Tomato",
+    "variety": "Local",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "3000",
+    "max_price": "4000",
+    "modal_price": "3500"
+  },
+  {
+    "state": "Andhra Pradesh",
+    "district": "Visakhapatnam",
+    "market": "Anakapally",
+    "commodity": "Gur(Jaggery)",
+    "variety": "NO 1",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "4310",
+    "max_price": "5400",
+    "modal_price": "4855"
+  },
+  {
+    "state": "Assam",
+    "district": "Cachar",
+    "market": "Fatakbazar",
+    "commodity": "Capsicum",
+    "variety": "Capsicum",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "4300",
+    "max_price": "4400",
+    "modal_price": "4300"
+  },
+  {
+    "state": "Assam",
+    "district": "Cachar",
+    "market": "Fatakbazar",
+    "commodity": "Pumpkin",
+    "variety": "Pumpkin",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "2200",
+    "max_price": "2400",
+    "modal_price": "2300"
+  },
+  {
+    "state": "Assam",
+    "district": "Darrang",
+    "market": "Kharupetia",
+    "commodity": "French Beans (Frasbean)",
+    "variety": "French Beans (Frasbean)",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "4000",
+    "max_price": "4400",
+    "modal_price": "4400"
+  },
+  {
+    "state": "Assam",
+    "district": "Jorhat",
+    "market": "Jorhat",
+    "commodity": "Cabbage",
+    "variety": "Cabbage",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "2200",
+    "max_price": "2300",
+    "modal_price": "2300"
+  },
+  {
+    "state": "Assam",
+    "district": "Jorhat",
+    "market": "Jorhat",
+    "commodity": "Green Chilli",
+    "variety": "Green Chilly",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "9000",
+    "max_price": "10000",
+    "modal_price": "9000"
+  },
+  {
+    "state": "Assam",
+    "district": "Kamrup",
+    "market": "Brahmaputra Private Market",
+    "commodity": "Green Chilli",
+    "variety": "Green Chilly",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "9500",
+    "max_price": "11000",
+    "modal_price": "10000"
+  },
+  {
+    "state": "Assam",
+    "district": "Kamrup",
+    "market": "Brahmaputra Private Market",
+    "commodity": "Tomato",
+    "variety": "Tomato",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "4500",
+    "max_price": "4800",
+    "modal_price": "4500"
+  },
+  {
+    "state": "Assam",
+    "district": "Karbi Anglong",
+    "market": "Manja",
+    "commodity": "Bhindi(Ladies Finger)",
+    "variety": "Bhindi",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "3500",
+    "max_price": "4000",
+    "modal_price": "4000"
+  },
+  {
+    "state": "Assam",
+    "district": "Karbi Anglong",
+    "market": "Manja",
+    "commodity": "Cabbage",
+    "variety": "Cabbage",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "2500",
+    "max_price": "2800",
+    "modal_price": "2500"
+  },
+  {
+    "state": "Assam",
+    "district": "Karbi Anglong",
+    "market": "Manja",
+    "commodity": "Tomato",
+    "variety": "Tomato",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "4000",
+    "max_price": "4500",
+    "modal_price": "4200"
+  },
+  {
+    "state": "Assam",
+    "district": "MORIGAON",
+    "market": "Jagiroad Dry Fish Market",
+    "commodity": "Lemon",
+    "variety": "Lemon",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "933.8",
+    "max_price": "1000.5",
+    "modal_price": "933.8"
+  },
+  {
+    "state": "Assam",
+    "district": "MORIGAON",
+    "market": "Jagiroad Dry Fish Market",
+    "commodity": "Tomato",
+    "variety": "Tomato",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "4500",
+    "max_price": "5000",
+    "modal_price": "4800"
+  },
+  {
+    "state": "Assam",
+    "district": "Nalbari",
+    "market": "Nalbari",
+    "commodity": "Brinjal",
+    "variety": "Brinjal",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "2000",
+    "max_price": "3500",
+    "modal_price": "2500"
+  },
+  {
+    "state": "Assam",
+    "district": "Nalbari",
+    "market": "Nalbari",
+    "commodity": "Cabbage",
+    "variety": "Cabbage",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "2200",
+    "max_price": "2500",
+    "modal_price": "2400"
+  },
+  {
+    "state": "Assam",
+    "district": "Nalbari",
+    "market": "Nalbari",
+    "commodity": "Tomato",
+    "variety": "Tomato",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "4500",
+    "max_price": "4700",
+    "modal_price": "4500"
+  },
+  {
+    "state": "Assam",
+    "district": "Sibsagar",
+    "market": "Sibsagar",
+    "commodity": "Bitter gourd",
+    "variety": "Bitter Gourd",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "4400",
+    "max_price": "4700",
+    "modal_price": "4500"
+  },
+  {
+    "state": "Assam",
+    "district": "Sibsagar",
+    "market": "Sibsagar",
+    "commodity": "Ginger(Green)",
+    "variety": "Green Ginger",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "11800",
+    "max_price": "12300",
+    "modal_price": "12300"
+  },
+  {
+    "state": "Assam",
+    "district": "Sibsagar",
+    "market": "Sibsagar",
+    "commodity": "Lemon",
+    "variety": "Lemon",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "1200.6",
+    "max_price": "1467.4",
+    "modal_price": "1467.4"
+  },
+  {
+    "state": "Assam",
+    "district": "Sonitpur",
+    "market": "Dhekiajuli",
+    "commodity": "Bottle gourd",
+    "variety": "Bottle Gourd",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "1333.4",
+    "max_price": "1666.75",
+    "modal_price": "1666.75"
+  },
+  {
+    "state": "Assam",
+    "district": "Sonitpur",
+    "market": "Dhekiajuli",
+    "commodity": "Lemon",
+    "variety": "Lemon",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "1067.2",
+    "max_price": "1334",
+    "modal_price": "1334"
+  },
+  {
+    "state": "Assam",
+    "district": "Sonitpur",
+    "market": "Dhekiajuli",
+    "commodity": "Pumpkin",
+    "variety": "Pumpkin",
+    "grade": "Local",
+    "arrival_date": "18/10/2024",
+    "min_price": "1000",
+    "max_price": "1200",
+    "modal_price": "1200"
+  },
+  {
+    "state": "Bihar",
+    "district": "Araria",
+    "market": "Forbesganj",
+    "commodity": "Potato",
+    "variety": "Jyoti",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2200",
+    "max_price": "2600",
+    "modal_price": "2500"
+  },
+  {
+    "state": "Bihar",
+    "district": "Banka",
+    "market": "Barahat",
+    "commodity": "Onion",
+    "variety": "Medium",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "5500",
+    "max_price": "6000",
+    "modal_price": "5800"
+  },
+  {
+    "state": "Bihar",
+    "district": "Jamui",
+    "market": "Jamui",
+    "commodity": "Onion",
+    "variety": "Medium",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "4500",
+    "max_price": "4600",
+    "modal_price": "4600"
+  },
+  {
+    "state": "Bihar",
+    "district": "Madhubani",
+    "market": "Jainagar",
+    "commodity": "Onion",
+    "variety": "Medium",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "5000",
+    "max_price": "5400",
+    "modal_price": "5200"
+  },
+  {
+    "state": "Bihar",
+    "district": "Patna",
+    "market": "Danapur",
+    "commodity": "Potato",
+    "variety": "Jyoti",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "3600",
+    "max_price": "4000",
+    "modal_price": "3800"
+  },
+  {
+    "state": "Chandigarh",
+    "district": "Chandigarh",
+    "market": "Chandigarh(Grain/Fruit)",
+    "commodity": "Bottle gourd",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "1000",
+    "max_price": "2000",
+    "modal_price": "1500"
+  },
+  {
+    "state": "Chandigarh",
+    "district": "Chandigarh",
+    "market": "Chandigarh(Grain/Fruit)",
+    "commodity": "Ginger(Green)",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "3000",
+    "max_price": "4500",
+    "modal_price": "4000"
+  },
+  {
+    "state": "Chandigarh",
+    "district": "Chandigarh",
+    "market": "Chandigarh(Grain/Fruit)",
+    "commodity": "Peas Wet",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "6000",
+    "max_price": "9000",
+    "modal_price": "8000"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Balod",
+    "market": "Gurur",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "I.R. 64",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2150",
+    "max_price": "2203",
+    "modal_price": "2175"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Balodabazar",
+    "market": "Sarsiwan",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "Paddy",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "1950",
+    "max_price": "1950",
+    "modal_price": "1950"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Balrampur",
+    "market": "Kusmee",
+    "commodity": "Maize",
+    "variety": "Local",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2100",
+    "max_price": "2100",
+    "modal_price": "2100"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Balrampur",
+    "market": "Ramanujganj",
+    "commodity": "Bamboo",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "170",
+    "max_price": "300",
+    "modal_price": "300"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Bijapur",
+    "market": "Bharamgarh",
+    "commodity": "Mahua",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2000",
+    "max_price": "2500",
+    "modal_price": "2200"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Dhamtari",
+    "market": "Belargaon",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "I.R. 36",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "1950",
+    "max_price": "1950",
+    "modal_price": "1950"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Dhamtari",
+    "market": "Gattasilli",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "I.R. 36",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2000",
+    "max_price": "2000",
+    "modal_price": "2000"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Dhamtari",
+    "market": "Nagari",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "I.R. 36",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2200",
+    "max_price": "2200",
+    "modal_price": "2200"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Durg",
+    "market": "Durg",
+    "commodity": "Bottle gourd",
+    "variety": "Bottle Gourd",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "1400",
+    "max_price": "1500",
+    "modal_price": "1400"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Durg",
+    "market": "Durg",
+    "commodity": "Cabbage",
+    "variety": "Cabbage",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "1600",
+    "max_price": "2000",
+    "modal_price": "2000"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Durg",
+    "market": "Durg",
+    "commodity": "Chikoos(Sapota)",
+    "variety": "Sapota",
+    "grade": "Medium",
+    "arrival_date": "18/10/2024",
+    "min_price": "4000",
+    "max_price": "5000",
+    "modal_price": "5000"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Durg",
+    "market": "Durg",
+    "commodity": "Coriander(Leaves)",
+    "variety": "Coriander",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "10000",
+    "max_price": "11000",
+    "modal_price": "10000"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Durg",
+    "market": "Durg",
+    "commodity": "Little gourd (Kundru)",
+    "variety": "Little gourd (Kundru)",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "3200",
+    "max_price": "3600",
+    "modal_price": "3200"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Kanker",
+    "market": "Korar",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "Paddy Coarse",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2000",
+    "max_price": "2000",
+    "modal_price": "2000"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Kanker",
+    "market": "Lakhanpuri",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2100",
+    "max_price": "2100",
+    "modal_price": "2100"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Kanker",
+    "market": "Sambalpur",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "Paddy Coarse",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2000",
+    "max_price": "2000",
+    "modal_price": "2000"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Mahasamund",
+    "market": "Bagbahra",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "MTU-1010",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2100",
+    "max_price": "2200",
+    "modal_price": "2150"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Raigarh",
+    "market": "Baramkela",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "Paddy Coarse",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2050",
+    "max_price": "2050",
+    "modal_price": "2050"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Raipur",
+    "market": "Arang",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "Paddy Medium",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2097",
+    "max_price": "2100",
+    "modal_price": "2099"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Rajnandgaon",
+    "market": "Rajnandgaon",
+    "commodity": "Apple",
+    "variety": "Apple",
+    "grade": "Medium",
+    "arrival_date": "18/10/2024",
+    "min_price": "10000",
+    "max_price": "12000",
+    "modal_price": "11000"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Rajnandgaon",
+    "market": "Rajnandgaon",
+    "commodity": "Brinjal",
+    "variety": "Brinjal",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "1800",
+    "max_price": "2500",
+    "modal_price": "2200"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Rajnandgaon",
+    "market": "Rajnandgaon",
+    "commodity": "Capsicum",
+    "variety": "Capsicum",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "5000",
+    "max_price": "7000",
+    "modal_price": "6000"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Sukma",
+    "market": "Doranpal",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "Paddy Coarse",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "1700",
+    "max_price": "1800",
+    "modal_price": "1750"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Surajpur",
+    "market": "Surajpur",
+    "commodity": "Paddy(Dhan)(Common)",
+    "variety": "I.R. 36",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2185",
+    "max_price": "2185",
+    "modal_price": "2185"
+  },
+  {
+    "state": "Chattisgarh",
+    "district": "Surguja",
+    "market": "Ambikapur",
+    "commodity": "Wheat",
+    "variety": "Local",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2281",
+    "max_price": "2281",
+    "modal_price": "2281"
+  },
+  {
+    "state": "Goa",
+    "district": "South Goa",
+    "market": "Curchorem",
+    "commodity": "Arecanut(Betelnut/Supari)",
+    "variety": "Red",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "29100",
+    "max_price": "29100",
+    "modal_price": "29100"
+  },
+  {
+    "state": "Goa",
+    "district": "South Goa",
+    "market": "Curchorem",
+    "commodity": "Arecanut(Betelnut/Supari)",
+    "variety": "Supari",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "33300",
+    "max_price": "33300",
+    "modal_price": "33300"
+  },
+  {
+    "state": "Goa",
+    "district": "South Goa",
+    "market": "Ponda",
+    "commodity": "Arecanut(Betelnut/Supari)",
+    "variety": "White",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "30000",
+    "max_price": "30100",
+    "modal_price": "30050"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Amreli",
+    "market": "Amreli",
+    "commodity": "Bajra(Pearl Millet/Cumbu)",
+    "variety": "Hybrid",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "1825",
+    "max_price": "2505",
+    "modal_price": "2120"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Amreli",
+    "market": "Amreli",
+    "commodity": "Cummin Seed(Jeera)",
+    "variety": "Cummin Seed(Jeera)",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "19950",
+    "max_price": "22375",
+    "modal_price": "21000"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Amreli",
+    "market": "Amreli",
+    "commodity": "Groundnut",
+    "variety": "Bold",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "3840",
+    "max_price": "5905",
+    "modal_price": "4775"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Amreli",
+    "market": "Amreli",
+    "commodity": "Jowar(Sorghum)",
+    "variety": "Jowar ( White)",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2025",
+    "max_price": "3700",
+    "modal_price": "3375"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Amreli",
+    "market": "Amreli",
+    "commodity": "Maize",
+    "variety": "Yellow",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2850",
+    "max_price": "2850",
+    "modal_price": "2850"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Amreli",
+    "market": "Amreli",
+    "commodity": "Soyabean",
+    "variety": "Soyabeen",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "3000",
+    "max_price": "4555",
+    "modal_price": "4140"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Amreli",
+    "market": "Babra",
+    "commodity": "Castor Seed",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "6275",
+    "max_price": "7475",
+    "modal_price": "6875"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Amreli",
+    "market": "Babra",
+    "commodity": "Cummin Seed(Jeera)",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "20050",
+    "max_price": "23000",
+    "modal_price": "21525"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Amreli",
+    "market": "Bagasara",
+    "commodity": "Cotton",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "5500",
+    "max_price": "8000",
+    "modal_price": "6750"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Amreli",
+    "market": "Damnagar",
+    "commodity": "Bhindi(Ladies Finger)",
+    "variety": "Bhindi",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2200",
+    "max_price": "3050",
+    "modal_price": "2750"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Anand",
+    "market": "Anand(Veg,Yard,Anand)",
+    "commodity": "Bhindi(Ladies Finger)",
+    "variety": "Bhindi",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2000",
+    "max_price": "2500",
+    "modal_price": "2250"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Anand",
+    "market": "Anand(Veg,Yard,Anand)",
+    "commodity": "Bottle gourd",
+    "variety": "Bottle Gourd",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "1000",
+    "max_price": "2000",
+    "modal_price": "1500"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Anand",
+    "market": "Anand(Veg,Yard,Anand)",
+    "commodity": "Tomato",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "4000",
+    "max_price": "4500",
+    "modal_price": "4250"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Anand",
+    "market": "Khambhat(Veg Yard Khambhat)",
+    "commodity": "Banana",
+    "variety": "Amruthapani",
+    "grade": "Medium",
+    "arrival_date": "18/10/2024",
+    "min_price": "1700",
+    "max_price": "2100",
+    "modal_price": "1900"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Anand",
+    "market": "Khambhat(Veg Yard Khambhat)",
+    "commodity": "Bhindi(Ladies Finger)",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "3500",
+    "max_price": "4500",
+    "modal_price": "4000"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Anand",
+    "market": "Khambhat(Veg Yard Khambhat)",
+    "commodity": "Bottle gourd",
+    "variety": "Bottle Gourd",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2500",
+    "max_price": "3000",
+    "modal_price": "2750"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Anand",
+    "market": "Khambhat(Veg Yard Khambhat)",
+    "commodity": "Brinjal",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2000",
+    "max_price": "4000",
+    "modal_price": "3000"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Banaskanth",
+    "market": "Deesa",
+    "commodity": "Mustard",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "5575",
+    "max_price": "5805",
+    "modal_price": "5750"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Banaskanth",
+    "market": "Deesa",
+    "commodity": "Rajgir",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "6345",
+    "max_price": "6790",
+    "modal_price": "6650"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Banaskanth",
+    "market": "Deesa(Bhildi)",
+    "commodity": "Bajra(Pearl Millet/Cumbu)",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2300",
+    "max_price": "2530",
+    "modal_price": "2475"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Banaskanth",
+    "market": "Deesa(Bhildi)",
+    "commodity": "Groundnut",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "4500",
+    "max_price": "6205",
+    "modal_price": "5525"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Banaskanth",
+    "market": "Deesa(Bhildi)",
+    "commodity": "Guar Seed(Cluster Beans Seed)",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "4250",
+    "max_price": "5015",
+    "modal_price": "4925"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Banaskanth",
+    "market": "Deesa(Bhildi)",
+    "commodity": "Wheat",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2650",
+    "max_price": "2880",
+    "modal_price": "2775"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Banaskanth",
+    "market": "Dhanera",
+    "commodity": "Castor Seed",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "6400",
+    "max_price": "6540",
+    "modal_price": "6485"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Banaskanth",
+    "market": "Dhanera",
+    "commodity": "Rajgir",
+    "variety": "Rajgir",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "6180",
+    "max_price": "6505",
+    "modal_price": "6360"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Banaskanth",
+    "market": "Panthawada",
+    "commodity": "Rajgir",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "6485",
+    "max_price": "6485",
+    "modal_price": "6485"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Banaskanth",
+    "market": "Thara",
+    "commodity": "Castor Seed",
+    "variety": "Castor seed",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "6435",
+    "max_price": "6550",
+    "modal_price": "6492.5"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Banaskanth",
+    "market": "Thara",
+    "commodity": "Soanf",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "5750",
+    "max_price": "6500",
+    "modal_price": "6125"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Banaskanth",
+    "market": "Thara(Shihori)",
+    "commodity": "Cotton",
+    "variety": "RCH-2",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "7205",
+    "max_price": "7550",
+    "modal_price": "7377.5"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Banaskanth",
+    "market": "Vadgam",
+    "commodity": "Bajra(Pearl Millet/Cumbu)",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2075",
+    "max_price": "2390",
+    "modal_price": "2390"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Bharuch",
+    "market": "Ankleshwar",
+    "commodity": "Cabbage",
+    "variety": "Cabbage",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2000",
+    "max_price": "3000",
+    "modal_price": "2500"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Bharuch",
+    "market": "Ankleshwar",
+    "commodity": "Potato",
+    "variety": "Potato",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2000",
+    "max_price": "3500",
+    "modal_price": "3000"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Bharuch",
+    "market": "Jambusar",
+    "commodity": "Arhar (Tur/Red Gram)(Whole)",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "8400",
+    "max_price": "8800",
+    "modal_price": "8600"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Bharuch",
+    "market": "Jambusar",
+    "commodity": "Cotton",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "5600",
+    "max_price": "6000",
+    "modal_price": "5800"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Bhavnagar",
+    "market": "Mahuva(Station Road)",
+    "commodity": "Groundnut",
+    "variety": "Bold",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "4005",
+    "max_price": "6055",
+    "modal_price": "5500"
+  },
+  {
+    "state": "Gujarat",
+    "district": "Bhavnagar",
+    "market": "Mahuva(Station Road)",
+    "commodity": "Jowar(Sorghum)",
+    "variety": "Other",
+    "grade": "FAQ",
+    "arrival_date": "18/10/2024",
+    "min_price": "2530",
+    "max_price": "4475",
+    "modal_price": "3500"
+  }
+        ];
+
+        function updateDistricts() {
+            const stateSelect = document.getElementById('state-select');
+            const districtSelect = document.getElementById('district-select');
+            const selectedState = stateSelect.value;
+
+            // Clear the existing options in the district dropdown
+            districtSelect.innerHTML = '<option value="">--Select District--</option>';
+
+            if (selectedState in districts) {
+                districts[selectedState].forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district;
+                    option.textContent = district;
+                    districtSelect.appendChild(option);
+                });
+            }
+        }
+
+        function displayPrices() {
+            const stateSelect = document.getElementById('state-select');
+            const districtSelect = document.getElementById('district-select');
+            const resultDiv = document.getElementById('result');
+
+            const selectedState = stateSelect.value;
+            const selectedDistrict = districtSelect.value;
+
+            if (!selectedState || !selectedDistrict) {
+                resultDiv.textContent = 'Please select both a state and a district.';
+                return;
+            }
+
+            const filteredData = data.filter(item => 
+                item.state === selectedState && item.district === selectedDistrict
+            );
+
+            if (filteredData.length === 0) {
+                resultDiv.textContent = 'No data available for the selected district.';
+                return;
+            }
+
+            const minPrices = filteredData.map(item => parseFloat(item.min_price));
+            const maxPrices = filteredData.map(item => parseFloat(item.max_price));
+
+            const minPrice = Math.min(...minPrices);
+            const maxPrice = Math.max(...maxPrices);
+
+            resultDiv.textContent = `Min Price: ${minPrice}, Max Price: ${maxPrice}`;
+        }
+    </script>
+    <title>Farm Retail Prices Dashboard</title>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <img src="logo.png" alt="Logo" class="logo">
+            <h1>Farm Retail Prices Dashboard</h1>
+        </nav>
+    </header>
+
+    <div class="banner">
+        <h2>Farm Retail Prices of Commodities</h2>
+    </div>
+
+    <div class="section">
+        <h3>ENQUIRY: STATE AVERAGE FARM RETAIL PRICES</h3>
+        <p>Find the farm retail prices of agricultural commodities collected from various regions.</p>
+    </div>
+
+    <div class="content">
+        <label for="commodity-select">Commodity</label>
+        <select id="commodity-select">
+            <option>Select</option>
+            <option>Rice</option>
+            <option>Wheat</option>
+            <option>Cock</option>
+            <option>bran</option>
+            <option>goat</option>
+            <option>gond</option>
+            <option>ajwan</option>
+            <option>Apples</option>
+            <option>Beans</option>
+            <option>Soybean</option>
+            <option>Sunflower seeds</option>
+            <option>Brinjal</option>
+            <option>Groundnut</option>
+            <option>Asalia</option>
+            <option>Banana</option>
+            <option>Orange</option>
+            <option>Bhindi</option>
+            <option>Grapes</option>
+            <option>Potatoes</option>
+            <option>Tomatoes</option>
+            <option>Onions</option>
+            <option>Carrots</option>
+            <option>Leafy greens</option>
+            <option>Cotton</option>
+            <option>Lemon</option>
+            <option>Sugarcane</option>
+            <option>Paddy</option>
+            <option>Cocoa</option>
+            <option>Milk</option>
+            <option>Gur</option>
+            <option>Butter</option>
+        </select>
+
+        <label for="state-select">State</label>
+        <select id="state-select" onchange="updateDistricts()">
+            <option>Select</option>
+            <option>Andhra Pradesh</option>
+            <option>Arunachal Pradesh</option>
+            <option>Assam</option>
+            <option>Bihar</option>
+            <option>Chhattisgarh</option>
+            <option>Goa</option>
+            <option>Gujarat</option>
+            <option>Haryana</option>
+            <option>Himachal Pradesh</option>
+            <option>Jharkhand</option>
+            <option>Karnataka</option>
+            <option>Kerala</option>
+            <option>Madhya Pradesh</option>
+            <option>Maharashtra</option>
+            <option>Manipur</option>
+            <option>Meghalaya</option>
+            <option>Mizoram</option>
+            <option>Nagaland</option>
+            <option>Odisha</option>
+            <option>Punjab</option>
+            <option>Rajasthan</option>
+            <option>Sikkim</option>
+            <option>Tamil Nadu</option>
+            <option>Telangana</option>
+            <option>Tripura</option>
+            <option>Uttar Pradesh</option>
+            <option>Uttarakhand</option>
+            <option>West Bengal</option>
+        </select>
+
+        <label for="district-select">District</label>
+        <select id="district-select">
+            <option value="">--Select District--</option>
+        </select>
+
+        <button onclick="displayPrices()">Go</button>
+        <div id="result"></div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2023 Farm Retail Prices Dashboard</p>
+    </footer>
+</body>
+</html>
+

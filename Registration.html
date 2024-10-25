@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles1.css">
+    <title>Farmer Registration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200..800&family=Pacifico&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Left side image container -->
+        <div class="image-container">
+            <img src="regis1.jpeg" alt="Farming Image" />
+        </div>
+
+        <!-- Right side registration form container -->
+        <div class="form-container">
+            <h1>Farmer Registration</h1>
+            <div class="container">
+                <form id="registration-form">
+                    <div class="form-group input-with-mic">
+                        <input type="text" id="full-name" placeholder="Full Name" required>
+                        <button type="button" class="voice-btn" onclick="startVoiceInput('full-name')">🎤</button>
+                    </div>
+
+                    <div class="form-group input-with-mic">
+                        <input type="password" id="password" placeholder="Password" required>
+                        <button type="button" class="voice-btn" onclick="startVoiceInput('password')">🎤</button>
+                    </div>
+
+                    <div class="form-group input-with-mic">
+                        <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+                        <button type="button" class="voice-btn" onclick="startVoiceInput('confirm-password')">🎤</button>
+                    </div>
+
+                    <div class="form-group input-with-mic">
+                        <input type="text" id="phone-number" placeholder="Phone Number" required>
+                        <button type="button" class="voice-btn" onclick="startVoiceInput('phone-number')">🎤</button>
+                    </div>
+
+                    <!-- Location Dropdown with all Indian States -->
+                    <div class="form-group">
+                        <select id="location" required>
+                            <option value="" disabled selected>Select State (Indian States)</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                            <option value="Chandigarh">Chandigarh</option>
+                            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                            <option value="Lakshadweep">Lakshadweep</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Puducherry">Puducherry</option>
+                            <option value="Ladakh">Ladakh</option>
+                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                        </select>
+                    </div>
+
+                    <button type="submit">Register Now</button>
+                    <p>Already have an account? <a href="login.html">Login</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startVoiceInput(fieldId) {
+            const field = document.getElementById(fieldId);
+            if (!('webkitSpeechRecognition' in window)) {
+                alert("Sorry, your browser doesn't support speech recognition.");
+                return;
+            }
+
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = 'en-US'; // You can modify this to support different languages
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.onresult = function(event) {
+                const speechResult = event.results[0][0].transcript;
+                field.value = speechResult;
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error: ' + event.error);
+            };
+
+            recognition.start();
+        }
+
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        document.getElementById('registration-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const fullName = document.getElementById('full-name').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const phoneNumber = document.getElementById('phone-number').value.trim();
+            const location = document.getElementById('location').value;
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match.");
+                return;
+            }
+
+            const phonePattern = /^[6789]\d{9}$/;
+            if (!phonePattern.test(phoneNumber)) {
+                alert("Phone number must start with 6, 7, 8, or 9 and have 10 digits.");
+                return;
+            }
+
+            if (users.find(user => user.phoneNumber === phoneNumber)) {
+                alert("Phone number already registered.");
+                return;
+            }
+
+            users.push({ fullName, password, phoneNumber, location });
+            localStorage.setItem('users', JSON.stringify(users));
+            alert(`Registration successful for ${fullName}!`);
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

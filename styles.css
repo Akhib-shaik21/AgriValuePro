@@ -1,0 +1,126 @@
+/* styles.css */
+
+body {
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.left-side {
+    flex: 1;
+    background-color: #f4f4f4;
+}
+
+.side-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.right-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #acc9aa;
+}
+
+.form-container {
+    width: 400px; /* Increase this if necessary */
+    padding: 50px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.logo {
+    text-align: left;
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    text-align: left;
+    margin-bottom: 30px;
+    font-size: 24px;
+    color: #333;
+}
+
+.input-container {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.input-element {
+    width: calc(100% - 50px); /* Adjusted for larger input */
+    padding: 15px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 18px;
+}
+
+.mic-button {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #000;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #333;
+}
+
+.extra-options {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.forgot-password {
+    color: #007bff;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.register-link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.register-link:hover {
+    text-decoration: underline;
+}
+
+p {
+    font-size: 14px;
+    color: #666;
+}
